@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./index.css" />
+</head>
+<body>
+    <header>
+        <h1>오늘 할 일</h1>
+    </header>
+    <main>
+        <section class="list"></section>
+        <section>
+            <input id="todoInput" placeholder="입력하기 ..." onchange="onChange(event)" />
+            <button onclick="addList()">추가</button>
+        </section>
+    </main>
+    <script>
+        let content = '';
+        let count = 1;
+        const section = document.getElementsByClassName('list')[0];
+        const input = document.getElementById('todoInput');
+
+        const onChange = (event) => {
+            content = event.target.value;
+        }
+
+        const addList = () => {
+            const div = document.createElement('div');
+            div.setAttribute('class', 'card');
+            div.setAttribute('id', count);
+
+            const span = document.createElement('span');
+            span.textContent = content;
+
+            const button = document.createElement('button');
+            button.setAttribute('onclick', 'removeList(event)');
+            button.setAttribute('id', count);
+            button.textContent = '완료';
+
+            div.appendChild(span);
+            div.appendChild(button);
+        
+            section.appendChild(div);
+            count++;
+            input.value = '';
+        }
+
+        const removeList = (event) => {
+            const card = document.getElementById(event.target.id);
+            
+            section.removeChild(card);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+.card {
+    border: 2px solid black;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.card > span {
+    display: block;
+    margin-bottom: 10px;
+}
+.card > button {
+    width: 70%;
+    border: none;
+}
+  

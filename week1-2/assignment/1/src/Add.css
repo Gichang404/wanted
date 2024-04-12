@@ -1,0 +1,16 @@
+section {
+    width: 50%;
+    padding-right: 20px;
+}
+
+section > input {
+    width: 96.2%;
+    display: block;
+    margin-bottom: 20px;
+}
+
+section > button {
+    width: 100%;
+    padding: 7px;
+    border: none;
+}

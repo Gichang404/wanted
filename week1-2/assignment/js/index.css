@@ -1,0 +1,39 @@
+body {
+    width: 500px;
+    padding: 20px;
+}
+
+main {
+    display: flex;
+}
+
+section {
+    width: 50%;
+    padding-right: 20px;
+}
+
+section > input {
+    width: 96.2%;
+    display: block;
+    margin-bottom: 20px;
+}
+
+section > button {
+    width: 100%;
+    padding: 7px;
+    border: none;
+}
+
+.card {
+    border: 2px solid black;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.card > span {
+    display: block;
+    margin-bottom: 10px;
+}
+.card > button {
+    width: 70%;
+    border: none;
+}

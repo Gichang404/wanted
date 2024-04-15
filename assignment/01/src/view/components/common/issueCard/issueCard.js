@@ -2,10 +2,10 @@ import styled from "styled-components";
 
 export const ICardWrapper = styled.div`
     display: flex;
-    flex-direction: row;
+    justify-content: space-between;
     border-bottom: 1px solid black;
     margin: 15px 0px;
-    padding: 10px 0px;
+    padding: 10px;
     &:hover {
       cursor: pointer;  
     }
@@ -26,11 +26,17 @@ export const ICardInfo = styled.span `
 `
 
 export const ICardCommnets = styled.section `
-    width: 20%;
+    padding-right: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
 `;
 
 export const ICardCommnetsNum = styled.span `
+    display: flex;
+    align-items: center;
+
+    & > p {
+        margin-left: 10px;
+    }
 `;

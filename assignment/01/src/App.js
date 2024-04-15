@@ -2,6 +2,7 @@ import {RouterProvider} from 'react-router-dom';
 import router from './system/router/router';
 import { DivApp } from './view/css/commons/commons';
 import MainStoreProvider from './system/store/store';
+import './index.css'
 
 function App() {
   return (

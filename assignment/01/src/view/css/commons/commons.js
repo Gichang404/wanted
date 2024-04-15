@@ -1,17 +1,21 @@
 import styled from "styled-components";
 
 export const DivApp = styled.div`
-    padding-top: 17px;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
 `
 
 export const Wrapper = styled.div`
-    width: 850px;
-    min-height: 800px;
-    border: 3px solid black;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 700px;
 `;
+
+export const Body = styled.div`
+    max-width: 1280px;
+    max-height: 87vh;
+    padding: 24px;
+`

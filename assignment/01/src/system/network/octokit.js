@@ -1,9 +1,9 @@
 import { Octokit } from "@octokit/core";
+const octokit = new Octokit({
+    auth: process.env.REACT_APP_GIT_TOKEN,
+});
 
-
-const octokit = new Octokit();
-
-const getAPI = async (owner=null, repo=null, per_page=25) => {
+const getAPI = async (owner=null, repo=null, page=1, state='open', sort="created") => {
     if (!owner || !repo) {
         return;
     }
@@ -12,7 +12,9 @@ const getAPI = async (owner=null, repo=null, per_page=25) => {
         const response = await octokit.request("GET /repos/{owner}/{repo}/issues", {
             owner,
             repo,
-            per_page,
+            page,
+            state,
+            sort,
         });
         return response;
     } catch(error) {

@@ -1,6 +1,22 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateBaseSymbol, changeSelect } from "../../../system/store/slices/Symbols";
 import styled from "styled-components";
 
 const Exchanger = () => {
+    const data = useSelector((state) => state.Symbols);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        console.log(data, "start Data");
+        dispatch(changeSelect('JPY'));
+        console.log("use changeSelect", "HPY");
+    }, [])
+
+    useEffect(() => {
+        console.log(data);
+    }, [data])
+
     return (
         <Wrapper>
             <OptionArea>

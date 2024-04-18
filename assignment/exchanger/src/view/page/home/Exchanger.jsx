@@ -1,36 +1,72 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateBaseGetData  } from "../../../system/store/slices/baseSymbol";
+import { isNumber, insertComma, removeComma } from "../../../functions/common/numberHandler";
+import jsonData from "../../../data/data.json"
 import styled from "styled-components";
 
 const Exchanger = () => {
-    const data = useSelector((state) => state.baseSymbol);
+    const inputRef = useRef(null);
+    const { base } = useSelector((state) => state.baseSymbol);
+    const [selected, setSelected] = useState("");
+    const [symbols, setSymbols] = useState([]);
+    const [exchangeResult, setExchangeResult] = useState(0);
     const dispatch = useDispatch();
 
-    // useEffect(() => {
-    //     console.log(data, "start Data");
-    //     dispatch(changeSelect('JPY'));
-    //     console.log("use changeSelect", "HPY");
-    // }, []);
+    const setInitialization = () => {
+        const symbolsArr = jsonData.symbols.filter((el) => base !== el);
+        setSelected(symbolsArr[0]);
+        setSymbols(symbolsArr);
+    }
 
     useEffect(() => {
-        console.log(data, "start Data");
-        dispatch(updateBaseGetData('CNY'));
-        console.log("use updateBaseSymbol", "CNY");
+        setInitialization();
     }, []);
 
-    useEffect(() => {
-        console.log(data);
-    }, [data])
+    const onChangeBase = async (symbol) => {
+        console.log(symbol);
+        // const response = await dispatch(updateBaseGetData(symbol));
+        // const exchangeRate = response.json();
+        // input 값 * exchangeRate 결과값 exchangeResult에 저장
+    }
+
+    // 마지막 입력 텍스트가 숫자인지 판단
+    // Number(chr)의 경우 특수문자가 입력되면 error가 발생, 배열생성하여 판단하게 만듬
+    
+    
+    const onChangeInput = (text) => {
+        let resultNumber = text;
+        const lately = text[text.length - 1];
+        
+        if(!isNumber(lately)) {
+            // getDebounce Stop
+            // input 아래 에러메세지 생성 
+            console.log('error :: 숫자가 아님')
+            return;
+        }
+
+        if (text.length > 3) {
+            resultNumber = insertComma(text);
+            inputRef.current.value = resultNumber;
+        }
+    }
 
     return (
         <Wrapper>
             <OptionArea>
                 <div>
-                    <input />
+                    <input ref={inputRef} onChange={(e) => {
+                        onChangeInput(e.target.value);
+                    }}/>
                 </div>
                 <div>
-                    <select></select>
+                    <select onChange={(e) => {
+                        onChangeBase(e.target.value);
+                    }}>
+                        {symbols.map((el, index) => {
+                            return <option key={index}>{el}</option>
+                        })}
+                    </select>
                 </div>
             </OptionArea>
             <ContentArea>

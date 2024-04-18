@@ -1,17 +1,23 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateBaseSymbol, changeSelect } from "../../../system/store/slices/Symbols";
+import { updateBaseGetData  } from "../../../system/store/slices/baseSymbol";
 import styled from "styled-components";
 
 const Exchanger = () => {
-    const data = useSelector((state) => state.Symbols);
+    const data = useSelector((state) => state.baseSymbol);
     const dispatch = useDispatch();
+
+    // useEffect(() => {
+    //     console.log(data, "start Data");
+    //     dispatch(changeSelect('JPY'));
+    //     console.log("use changeSelect", "HPY");
+    // }, []);
 
     useEffect(() => {
         console.log(data, "start Data");
-        dispatch(changeSelect('JPY'));
-        console.log("use changeSelect", "HPY");
-    }, [])
+        dispatch(updateBaseGetData('CNY'));
+        console.log("use updateBaseSymbol", "CNY");
+    }, []);
 
     useEffect(() => {
         console.log(data);

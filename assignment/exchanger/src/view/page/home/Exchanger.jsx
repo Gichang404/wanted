@@ -1,28 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateBaseGetData  } from "../../../system/store/slices/baseSymbol";
-import { initialNumber, insertComma, removeComma, removeZeroStart } from "../../../functions/common/currencyHandler";
-import { isComma, isNumber } from "../../../functions/common/validation/currencyValidation";
-import jsonData from "../../../data/data.json"
+import { updateBaseGetData, removeSymbols, addSymbols  } from "../../../system/store/slices/currencyInfoSlice";
+import { initialNumber, insertComma, removeZeroStart } from "../../../functions/common/currencyHandler";
+import { isNumber } from "../../../functions/common/validation/currencyValidation";
+// import jsonData from "../../../data/data.json"
 import styled from "styled-components";
 
 const Exchanger = () => {
     const inputRef = useRef(null);
-    const { base } = useSelector((state) => state.baseSymbol);
+    const store = useSelector((state) => state.currencyInfo);
     const [selected, setSelected] = useState("");
     const [symbols, setSymbols] = useState([]);
     const [exchangeResult, setExchangeResult] = useState(0);
     const dispatch = useDispatch();
 
-    const setInitialization = () => {
-        const symbolsArr = jsonData.symbols.filter((el) => base !== el);
-        setSelected(symbolsArr[0]);
-        setSymbols(symbolsArr);
-    }
-
-    useEffect(() => {
-        setInitialization();
-    }, []);
+    // const setInitialization = () => {
+    //     const symbolsArr = jsonData.symbols.filter((el) => base !== el);
+    //     setSelected(symbolsArr[0]);
+    //     setSymbols(symbolsArr);
+    // }
 
     const onChangeBase = async (symbol) => {
         console.log(symbol);

@@ -1,9 +1,9 @@
 import { combineReducers } from "redux";
-import Symbols from "./slices/baseSymbol";
+import currencyInfo from "./slices/currencyInfoSlice";
 import { configureStore } from "@reduxjs/toolkit";
 
 const rootReducer = combineReducers({
-    baseSymbol: Symbols,
+    currencyInfo,
 });
 
 const store = configureStore({reducer: rootReducer});

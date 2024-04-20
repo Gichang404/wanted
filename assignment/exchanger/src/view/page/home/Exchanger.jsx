@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateBaseGetData  } from "../../../system/store/slices/baseSymbol";
-import { isNumber, insertComma, removeComma } from "../../../functions/common/numberHandler";
+import { initialNumber, insertComma, removeComma, removeZeroStart } from "../../../functions/common/currencyHandler";
+import { isComma, isNumber } from "../../../functions/common/validation/currencyValidation";
 import jsonData from "../../../data/data.json"
 import styled from "styled-components";
 
@@ -32,22 +33,26 @@ const Exchanger = () => {
 
     // 마지막 입력 텍스트가 숫자인지 판단
     // Number(chr)의 경우 특수문자가 입력되면 error가 발생, 배열생성하여 판단하게 만듬
-    
-    
-    const onChangeInput = (text) => {
-        let resultNumber = text;
-        const lately = text[text.length - 1];
+
+
+    const inputValueHandler = (input) => {
+        const length = input.length;
+        let strNumber = initialNumber(input);
         
-        if(!isNumber(lately)) {
-            // getDebounce Stop
-            // input 아래 에러메세지 생성 
-            console.log('error :: 숫자가 아님')
+        if (!isNumber(strNumber)) {
+            inputRef.current.value = strNumber.slice(0, -1);
             return;
         }
 
-        if (text.length > 3) {
-            resultNumber = insertComma(text);
-            inputRef.current.value = resultNumber;
+        if (length === 2) {
+            inputRef.current.value = removeZeroStart(strNumber);
+            return;
+        }
+        
+
+        if (length > 3) {
+            strNumber = insertComma(strNumber);
+            inputRef.current.value = strNumber;
         }
     }
 
@@ -55,9 +60,11 @@ const Exchanger = () => {
         <Wrapper>
             <OptionArea>
                 <div>
-                    <input ref={inputRef} onChange={(e) => {
-                        onChangeInput(e.target.value);
-                    }}/>
+                    <input placeholder="숫자만 입력 가능합니다." ref={inputRef} 
+                        onChange={(e) => {
+                            inputValueHandler(e.target.value);
+                        }}
+                    />
                 </div>
                 <div>
                     <select onChange={(e) => {

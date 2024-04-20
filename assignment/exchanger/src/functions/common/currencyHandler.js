@@ -20,7 +20,7 @@ export const removeComma = (strNumber) => {
 
 export const insertComma = (input) => {
     const resultNumber = Number(input).toLocaleString(); 
-    console.log('결과값', resultNumber)
+    
     return resultNumber;
 }
 

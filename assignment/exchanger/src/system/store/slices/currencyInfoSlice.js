@@ -34,7 +34,9 @@ const currencyInfoSlice = createSlice({
 export const updateBaseGetData = createAsyncThunk(
     "symbols/updateBaseAndData", 
     async (symbol, { dispatch, getState }) => {
-        console.log(symbol);
+        const state = getState();
+        dispatch(addSymbols(state.base));
+        dispatch(removeSymbols(symbol));
         dispatch(changeBase(symbol));
         
         // api 요청

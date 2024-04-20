@@ -5,6 +5,8 @@ import { initialNumber, insertComma, removeZeroStart } from "../../../functions/
 import { isNumber } from "../../../functions/common/validation/currencyValidation";
 // import jsonData from "../../../data/data.json"
 import styled from "styled-components";
+import { createDebouncer } from "../../../functions/utility/createDebouncer";
+
 
 const Exchanger = () => {
     const inputRef = useRef(null);
@@ -13,6 +15,7 @@ const Exchanger = () => {
     const [symbols, setSymbols] = useState([]);
     const [exchangeResult, setExchangeResult] = useState(0);
     const dispatch = useDispatch();
+    const debouncer = createDebouncer();
 
     // const setInitialization = () => {
     //     const symbolsArr = jsonData.symbols.filter((el) => base !== el);
@@ -30,8 +33,10 @@ const Exchanger = () => {
     // 마지막 입력 텍스트가 숫자인지 판단
     // Number(chr)의 경우 특수문자가 입력되면 error가 발생, 배열생성하여 판단하게 만듬
 
-
-    const inputValueHandler = (input) => {
+    const test = (value) => {
+        console.log(value);
+    }
+    function inputValueHandler(input) {
         const length = input.length;
         let strNumber = initialNumber(input);
         
@@ -50,8 +55,10 @@ const Exchanger = () => {
             strNumber = insertComma(strNumber);
             inputRef.current.value = strNumber;
         }
+        
+        debouncer(inputRef.current.value, 2000, test);
     }
-
+    
     return (
         <Wrapper>
             <OptionArea>

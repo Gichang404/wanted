@@ -1,53 +1,76 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateBaseGetData, setLatest  } from "../../../system/store/slices/currencyInfoSlice";
-import { initialNumber, insertComma, removeZeroStart } from "../../../functions/common/currencyHandler";
+import { initialNumber, insertComma, removeComma, removeZeroStart } from "../../../functions/common/currencyHandler";
 import { isNumber } from "../../../functions/common/validation/currencyValidation";
-// import jsonData from "../../../data/data.json"
 import styled from "styled-components";
-import { createDebouncer } from "../../../functions/utility/createDebouncer";
-import { filterArray } from "../../../functions/utility/utility";
+import { createDebouncer, createTimer } from "../../../functions/utility/createDebouncer";
+import { dateFormatter, filterArray } from "../../../functions/utility/utility";
 import { getLatest } from "../../../system/api/api";
 
 const Exchanger = () => {
     const inputRef = useRef(null);
     const { base, symbols, latest } = useSelector((state) => state.currencyInfo);
-    const [selected, setSelected] = useState("");
-    const [exchangeResult, setExchangeResult] = useState(0);
+    const [selected, setSelected] = useState("CAD");
+    const [isRefatch, setIsRefatch] = useState(false);
+    const [convertCurrency, setConvertCurrency] = useState(0);
     const dispatch = useDispatch();
     const debouncer = createDebouncer();
-
-    // const getApi = async (base, symbols) => {
-    //     const data = await getLatest(base,symbols);
-    //     return data;
-    // }
+    const timer = createTimer();
 
     useEffect(() => {
-        const arr = filterArray(base, symbols);
-        getLatest(base, arr).then((res) => {
-            const { date, rates } = res;
-            dispatch(setLatest({ date, rates }));
-        }).catch((error) => {
-                console.log(error)
-            }
-        );
-    }, [])
-
-    useEffect(() => {
-        console.log(latest);
+        console.log("Exchanger Component", latest);
+        console.log("symbols :: ", symbols);
+        console.log("base :: ", base);
+        console.log("latest :: ", latest);
+        console.log("convertCurrency", convertCurrency);
+        console.log("selected", selected);
     }, [latest])
 
     const onChangeBase = async (symbol) => {
-        const firstItem = filterArray(symbol, symbols)[0];
-        setSelected(firstItem);
         dispatch(updateBaseGetData(symbol));
     }
     
-    const test = (value) => {
-        console.log(value);
+    const setTimer = (time) => {
+        timer(60, () => {
+            setIsRefatch(true);
+        });
+
+        if (isRefatch) {
+            setIsRefatch(false);
+        }
     }
 
-    function inputValueHandler(input) {
+    // 환율 정보를 받아오고 현재 화폐기준으로 환산, 데이터 갱신 타이머 세팅
+    const converter = async (currency, selectSymbol) => {
+        try {
+            const response = await getLatest(base, symbols);
+            const { date, rates } = await response;
+            const convertResult = rates[selectSymbol] * currency;
+
+            setConvertCurrency(convertResult);
+            dispatch(setLatest({ date, rates }));
+            setTimer(60);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // Navigate 선택 시 해당 기준 화폐로 변환, 1분이 지났다면 데이터 갱신 후 변환, 안 지났다면 기존 state정보로 계산
+    const selectedHandler = (target) => {
+        const currency = Number(removeComma(inputRef.current.value));
+        if (isRefatch) {
+            console.log("새로운 데이터로 계산합니다.")
+            converter(currency, target);
+        } else {
+            console.log("기존 데이터로 계산했습니다..")
+            setConvertCurrency(latest.rates[target] * currency);
+        }
+        setSelected(target);
+    }
+
+    // input value 검증 및 debounce 이벤트 생성
+    const inputValueHandler = (input) => {
         const length = input.length;
         let strNumber = initialNumber(input);
         
@@ -67,12 +90,9 @@ const Exchanger = () => {
             inputRef.current.value = strNumber;
         }
         
-        debouncer(inputRef.current.value, 2000, test);
+        debouncer(Number(removeComma(strNumber)), selected, 0.5, converter);
     }
-    console.log("Exchanger Component", latest);
-    console.log("symbols :: ", symbols);
-    console.log("base :: ", base);
-    console.log("latest :: ", latest);
+
     return (
         <Wrapper>
             <OptionArea>
@@ -84,8 +104,8 @@ const Exchanger = () => {
                     />
                 </div>
                 <div>
-                    <select onChange={(e) => {
-                        onChangeBase(e.target.value);
+                    <select onChange={(event) => {
+                        onChangeBase(event.target.value);
                     }}>
                         {symbols.map((el, index) => (
                             <option key={index}>{el}</option>
@@ -95,14 +115,25 @@ const Exchanger = () => {
             </OptionArea>
             <ContentArea>
                 <NaviArea>
-                    {symbols.map((el, index) => (
-                        base !== el && 
-                            <div key={index}>{el}</div>
+                    {symbols.map((symbol, index) => (
+                        base !== symbol && 
+                            <div key={index}
+                                 onClick={(event) => {
+                                    selectedHandler(event.target.textContent) 
+                                 }}
+                            >{symbol}</div>
                     ))}
                 </NaviArea>
                 <Content>
-                    <p>KRW: 20000</p>
-                    <p>기준일: 2024-04-17</p>
+                    {
+                        latest.date ? 
+                            (
+                                <>
+                                    <p>{selected}: {convertCurrency}</p>
+                                    <p>기준일: {dateFormatter(latest.date)}</p>
+                                </>
+                            ) : (<p>원하는 금액을 입력해주세요.</p>)
+                    }
                 </Content>
             </ContentArea>
         </Wrapper>

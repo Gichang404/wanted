@@ -1,19 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
-const isInArray = (arr, target) => {
-    const index = arr.indexOf(target);
-    if (index !== -1) {
-        return true
-    }
-
-    return false
-}
+import { filterArray, isInArray } from "../../../functions/utility/utility";
+import { getLatest } from "../../api/api";
 
 const currencyInfoSlice = createSlice({
     name: "CURRENCY_INFO",
     initialState: {
         base: "USD",
         symbols: ["USD", "CAD", "KRW", "HKD", "JPY", "CNY"],
+        latest: {}
     },
     reducers: {
         changeBase: (state, action) => {
@@ -23,13 +17,15 @@ const currencyInfoSlice = createSlice({
                 console.log("잘못된 심볼입니다.")
             }
         },
+        setLatest: (state, action) => {
+            state.latest = action.payload;
+        },
         addSymbols: (state, action) => {
             state.symbols.push(action.payload);
         },
         removeSymbols: (state, action) => {
-            const targetIndex = state.symbols.indexOf(action.payload);
-
-            if (targetIndex !== -1) {
+            if (isInArray(state.symbols, action.payload)) {
+                const targetIndex = state.symbols.indexOf(action.payload);
                 state.symbols.splice(targetIndex, 1);
             } else {
                 console.log('값을 확인해주세요.')
@@ -37,20 +33,22 @@ const currencyInfoSlice = createSlice({
         },
     }
 });
-const test = (input) => {
-    console.log('REDUX THUNK 에서 뭔가 하는 함수 input::', input);
-}
 
 export const updateBaseGetData = createAsyncThunk(
     "symbols/updateBaseAndData", 
     async (symbol, { dispatch, getState }) => {
+        const symbols = getState().currencyInfo.symbols;
         dispatch(changeBase(symbol));
-        test(symbol)
         // api 요청
-
-        // api data return
+        try {
+            const data = await getLatest(symbol, filterArray(symbol, symbols));
+            const { date, rates } = data;
+            dispatch(setLatest({ date, rates }))
+        } catch (error) {
+            console.log(error);
+        }
     }
 );
 
-export const { changeBase, addSymbols, removeSymbols } = currencyInfoSlice.actions;
+export const { changeBase, addSymbols, removeSymbols, setLatest} = currencyInfoSlice.actions;
 export default currencyInfoSlice.reducer;

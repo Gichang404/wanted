@@ -1,47 +1,52 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateBaseGetData, removeSymbols, addSymbols  } from "../../../system/store/slices/currencyInfoSlice";
+import { updateBaseGetData, setLatest  } from "../../../system/store/slices/currencyInfoSlice";
 import { initialNumber, insertComma, removeZeroStart } from "../../../functions/common/currencyHandler";
 import { isNumber } from "../../../functions/common/validation/currencyValidation";
 // import jsonData from "../../../data/data.json"
 import styled from "styled-components";
 import { createDebouncer } from "../../../functions/utility/createDebouncer";
-
+import { filterArray } from "../../../functions/utility/utility";
+import { getLatest } from "../../../system/api/api";
 
 const Exchanger = () => {
     const inputRef = useRef(null);
-    const { base, symbols } = useSelector((state) => state.currencyInfo);
+    const { base, symbols, latest } = useSelector((state) => state.currencyInfo);
     const [selected, setSelected] = useState("");
-    // const [symbolArr, setSymbolArr] = useState((state) => state.currencyInfo);
     const [exchangeResult, setExchangeResult] = useState(0);
     const dispatch = useDispatch();
     const debouncer = createDebouncer();
 
-    // const setInitialization = () => {
-    //     const arr = symbols.filter((el) => base !== el);
-    //     setSymbolArr(arr);
-    //     setSelected(arr[0]);
+    // const getApi = async (base, symbols) => {
+    //     const data = await getLatest(base,symbols);
+    //     return data;
     // }
 
-    // useEffect(() => {
-    //     setInitialization();
-    // }, [])
+    useEffect(() => {
+        const arr = filterArray(base, symbols);
+        getLatest(base, arr).then((res) => {
+            const { date, rates } = res;
+            dispatch(setLatest({ date, rates }));
+        }).catch((error) => {
+                console.log(error)
+            }
+        );
+    }, [])
+
+    useEffect(() => {
+        console.log(latest);
+    }, [latest])
 
     const onChangeBase = async (symbol) => {
-        console.log(symbol);
-        setSelected(symbol);
+        const firstItem = filterArray(symbol, symbols)[0];
+        setSelected(firstItem);
         dispatch(updateBaseGetData(symbol));
-        // const response = await dispatch(updateBaseGetData(symbol));
-        // const exchangeRate = response.json();
-        // input 값 * exchangeRate 결과값 exchangeResult에 저장
     }
-
-    // 마지막 입력 텍스트가 숫자인지 판단
-    // Number(chr)의 경우 특수문자가 입력되면 error가 발생, 배열생성하여 판단하게 만듬
-    console.log(selected);
+    
     const test = (value) => {
         console.log(value);
     }
+
     function inputValueHandler(input) {
         const length = input.length;
         let strNumber = initialNumber(input);
@@ -64,7 +69,10 @@ const Exchanger = () => {
         
         debouncer(inputRef.current.value, 2000, test);
     }
-    console.log("Exchanger Component", symbols, base)
+    console.log("Exchanger Component", latest);
+    console.log("symbols :: ", symbols);
+    console.log("base :: ", base);
+    console.log("latest :: ", latest);
     return (
         <Wrapper>
             <OptionArea>

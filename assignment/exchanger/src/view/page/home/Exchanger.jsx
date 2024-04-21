@@ -10,21 +10,27 @@ import { createDebouncer } from "../../../functions/utility/createDebouncer";
 
 const Exchanger = () => {
     const inputRef = useRef(null);
-    const store = useSelector((state) => state.currencyInfo);
+    const { base, symbols } = useSelector((state) => state.currencyInfo);
     const [selected, setSelected] = useState("");
-    const [symbols, setSymbols] = useState([]);
+    // const [symbolArr, setSymbolArr] = useState((state) => state.currencyInfo);
     const [exchangeResult, setExchangeResult] = useState(0);
     const dispatch = useDispatch();
     const debouncer = createDebouncer();
 
     // const setInitialization = () => {
-    //     const symbolsArr = jsonData.symbols.filter((el) => base !== el);
-    //     setSelected(symbolsArr[0]);
-    //     setSymbols(symbolsArr);
+    //     const arr = symbols.filter((el) => base !== el);
+    //     setSymbolArr(arr);
+    //     setSelected(arr[0]);
     // }
+
+    // useEffect(() => {
+    //     setInitialization();
+    // }, [])
 
     const onChangeBase = async (symbol) => {
         console.log(symbol);
+        setSelected(symbol);
+        dispatch(updateBaseGetData(symbol));
         // const response = await dispatch(updateBaseGetData(symbol));
         // const exchangeRate = response.json();
         // input 값 * exchangeRate 결과값 exchangeResult에 저장
@@ -32,7 +38,7 @@ const Exchanger = () => {
 
     // 마지막 입력 텍스트가 숫자인지 판단
     // Number(chr)의 경우 특수문자가 입력되면 error가 발생, 배열생성하여 판단하게 만듬
-
+    console.log(selected);
     const test = (value) => {
         console.log(value);
     }
@@ -58,7 +64,7 @@ const Exchanger = () => {
         
         debouncer(inputRef.current.value, 2000, test);
     }
-    
+    console.log("Exchanger Component", symbols, base)
     return (
         <Wrapper>
             <OptionArea>
@@ -73,18 +79,18 @@ const Exchanger = () => {
                     <select onChange={(e) => {
                         onChangeBase(e.target.value);
                     }}>
-                        {symbols.map((el, index) => {
-                            return <option key={index}>{el}</option>
-                        })}
+                        {symbols.map((el, index) => (
+                            <option key={index}>{el}</option>
+                        ))}
                     </select>
                 </div>
             </OptionArea>
             <ContentArea>
                 <NaviArea>
-                    <div>KRW</div>
-                    <div>JPY</div>
-                    <div>CNY</div>
-                    <div>CAD</div>
+                    {symbols.map((el, index) => (
+                        base !== el && 
+                            <div key={index}>{el}</div>
+                    ))}
                 </NaviArea>
                 <Content>
                     <p>KRW: 20000</p>

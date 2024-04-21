@@ -1,16 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const initialSymbols = ["CAD", "KRW", "HKD", "JPY", "CNY"];
+const isInArray = (arr, target) => {
+    const index = arr.indexOf(target);
+    if (index !== -1) {
+        return true
+    }
+
+    return false
+}
 
 const currencyInfoSlice = createSlice({
     name: "CURRENCY_INFO",
     initialState: {
         base: "USD",
-        symbols: initialSymbols,
+        symbols: ["USD", "CAD", "KRW", "HKD", "JPY", "CNY"],
     },
     reducers: {
         changeBase: (state, action) => {
-            if (action.payload in initialSymbols) {
+            if (isInArray(state.symbols, action.payload)) {
                 state.base = action.payload;
             } else {
                 console.log("잘못된 심볼입니다.")
@@ -30,15 +37,15 @@ const currencyInfoSlice = createSlice({
         },
     }
 });
+const test = (input) => {
+    console.log('REDUX THUNK 에서 뭔가 하는 함수 input::', input);
+}
 
 export const updateBaseGetData = createAsyncThunk(
     "symbols/updateBaseAndData", 
     async (symbol, { dispatch, getState }) => {
-        const state = getState();
-        dispatch(addSymbols(state.base));
-        dispatch(removeSymbols(symbol));
         dispatch(changeBase(symbol));
-        
+        test(symbol)
         // api 요청
 
         // api data return

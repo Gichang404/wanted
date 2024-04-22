@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { filterArray, isInArray } from "../../../functions/utility/utility";
+import { dateFormatter, filterArray, isInArray } from "../../../function/utility/utility";
 import { getLatest } from "../../api/api";
 
 const currencyInfoSlice = createSlice({
@@ -43,7 +43,7 @@ export const updateBaseGetData = createAsyncThunk(
         try {
             const data = await getLatest(symbol, filterArray(symbol, symbols));
             const { date, rates } = data;
-            dispatch(setLatest({ date, rates }))
+            dispatch(setLatest({ date: dateFormatter(date), rates }));
         } catch (error) {
             console.log(error);
         }

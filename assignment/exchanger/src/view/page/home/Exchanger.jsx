@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateBaseGetData, setLatest  } from "../../../system/store/slices/currencyInfoSlice";
-import { initialNumber, insertComma, removeComma, removeZeroStart } from "../../../functions/common/currencyHandler";
-import { isNumber } from "../../../functions/common/validation/currencyValidation";
+import { initialNumber, insertComma, removeComma, removeZeroStart } from "../../../function/common/currencyHandler";
+import { isNumber } from "../../../function/common/validation/currencyValidation";
 import styled from "styled-components";
-import { createDebouncer, createTimer } from "../../../functions/utility/createDebouncer";
-import { dateFormatter, filterArray } from "../../../functions/utility/utility";
+import { createDebouncer, createTimer } from "../../../function/utility/createDebouncer";
+import { dateFormatter } from "../../../function/utility/utility";
 import { getLatest } from "../../../system/api/api";
+import ExchangerView from "./ExchangerView";
 
 const Exchanger = () => {
     const inputRef = useRef(null);
@@ -46,10 +47,10 @@ const Exchanger = () => {
         try {
             const response = await getLatest(base, symbols);
             const { date, rates } = await response;
-            const convertResult = rates[selectSymbol] * currency;
+            const formattedCurrency = parseFloat((rates[selectSymbol] * currency).toFixed(2));
 
-            setConvertCurrency(convertResult);
-            dispatch(setLatest({ date, rates }));
+            setConvertCurrency(formattedCurrency);
+            dispatch(setLatest({ date: dateFormatter(date), rates }));
             setTimer(60);
         } catch (error) {
             console.log(error);
@@ -58,13 +59,18 @@ const Exchanger = () => {
 
     // Navigate 선택 시 해당 기준 화폐로 변환, 1분이 지났다면 데이터 갱신 후 변환, 안 지났다면 기존 state정보로 계산
     const selectedHandler = (target) => {
+        if (Object.keys(latest).length === 0) {
+            setSelected(target);
+            return;
+        }
+
         const currency = Number(removeComma(inputRef.current.value));
         if (isRefatch) {
             console.log("새로운 데이터로 계산합니다.")
             converter(currency, target);
         } else {
-            console.log("기존 데이터로 계산했습니다..")
-            setConvertCurrency(latest.rates[target] * currency);
+            const formattedCurrency = parseFloat((latest.rates[target] * currency).toFixed(2));
+            setConvertCurrency(formattedCurrency);
         }
         setSelected(target);
     }
@@ -94,87 +100,18 @@ const Exchanger = () => {
     }
 
     return (
-        <Wrapper>
-            <OptionArea>
-                <div>
-                    <input placeholder="숫자만 입력 가능합니다." ref={inputRef} 
-                        onChange={(e) => {
-                            inputValueHandler(e.target.value);
-                        }}
-                    />
-                </div>
-                <div>
-                    <select onChange={(event) => {
-                        onChangeBase(event.target.value);
-                    }}>
-                        {symbols.map((el, index) => (
-                            <option key={index}>{el}</option>
-                        ))}
-                    </select>
-                </div>
-            </OptionArea>
-            <ContentArea>
-                <NaviArea>
-                    {symbols.map((symbol, index) => (
-                        base !== symbol && 
-                            <div key={index}
-                                 onClick={(event) => {
-                                    selectedHandler(event.target.textContent) 
-                                 }}
-                            >{symbol}</div>
-                    ))}
-                </NaviArea>
-                <Content>
-                    {
-                        latest.date ? 
-                            (
-                                <>
-                                    <p>{selected}: {convertCurrency}</p>
-                                    <p>기준일: {dateFormatter(latest.date)}</p>
-                                </>
-                            ) : (<p>원하는 금액을 입력해주세요.</p>)
-                    }
-                </Content>
-            </ContentArea>
-        </Wrapper>
-    );
+        <ExchangerView 
+            inputRef={inputRef} 
+            inputValueHandler={inputValueHandler}
+            onChangeBase={onChangeBase}
+            symbols={symbols}
+            base={base}
+            selectedHandler={selectedHandler}
+            latest={latest}
+            selected={selected}
+            convertCurrency={convertCurrency}
+        />
+    )
 }
 
 export default Exchanger;
-
-const Wrapper = styled.div`
-  width: 800px;
-  height: 800px;
-  border: 2px solid black;
-`;
-
-const OptionArea = styled.div`
-    display: flex;
-    justify-content: space-around;
-    padding: 20px;
-
-    & > div {
-        width: 300px;
-        height: 50px;
-        border: 1px solid gray;
-    }
-`;
-
-const ContentArea = styled.div`
-    border: 1px solid gray;
-    padding: 20px;
-`;
-
-const NaviArea = styled.div`
-    display: flex;
-
-    & > div {
-        height: 25px;
-        border: 1px solid black;
-    }
-`;
-
-const Content = styled.div`
-    width: 100%;
-    height: 500px;
-`;

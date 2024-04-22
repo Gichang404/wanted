@@ -19,27 +19,20 @@ const Exchanger = () => {
     const debouncer = createDebouncer();
     const timer = createTimer();
 
-    const initializationSelected = (target, arr) => {
-        const filteredArr = filterArray(target, arr);
-        setSelected(filteredArr[0]);
-    }
-
-    useEffect(() => {
-        initializationSelected(base, symbols);
-    }, [base])
-    console.log('latest', latest);
-
     const loadingHandler = () => {
-        console.log('prev', isLoading);
         setIsLoading((prev) => !prev);
     }
 
-    const onChangeBase = async (symbol) => {
-        dispatch(updateBaseGetData(symbol));
+    // base가 변경될 경우 환율 정보 다시 받아오고 상태관리 생신, selected 갱신
+    const onChangeBase = (symbol) => {
+        dispatch(updateBaseGetData(symbol, loadingHandler));
+        const filteredArr = filterArray(symbol, symbols);
+        setSelected(filteredArr[0]);
     }
     
+    // 타이머 거는 함수
     const setTimer = (time) => {
-        timer(60, () => {
+        timer(time, () => {
             setIsRefatch(true);
         });
 
@@ -51,7 +44,6 @@ const Exchanger = () => {
     // 환율 정보를 받아오고 현재 화폐기준으로 환산, 데이터 갱신 타이머 세팅
     const converter = async (currency, selectSymbol) => {
         loadingHandler();
-        console.log("Loading True")
         try {
             const response = await getLatest(base, symbols);
             const { date, rates } = await response;
@@ -64,7 +56,6 @@ const Exchanger = () => {
             console.log(error);
         } finally {
             loadingHandler();
-            console.log("Loading True")
         }
     }
 
@@ -77,7 +68,6 @@ const Exchanger = () => {
 
         const currency = Number(removeComma(inputRef.current.value));
         if (isRefatch) {
-            console.log("새로운 데이터로 계산합니다.")
             converter(currency, target);
         } else {
             const formattedCurrency = parseFloat((latest.rates[target] * currency).toFixed(2));

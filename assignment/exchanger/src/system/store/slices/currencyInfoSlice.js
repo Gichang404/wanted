@@ -34,11 +34,13 @@ const currencyInfoSlice = createSlice({
     }
 });
 
+// base가 바뀔 경우 Data, state 갱신
 export const updateBaseGetData = createAsyncThunk(
     "symbols/updateBaseAndData", 
-    async (symbol, { dispatch, getState }) => {
+    async (symbol, loadingHandler, { dispatch, getState }) => {
         const symbols = getState().currencyInfo.symbols;
         dispatch(changeBase(symbol));
+        loadingHandler();
         // api 요청
         try {
             const data = await getLatest(symbol, filterArray(symbol, symbols));
@@ -46,6 +48,8 @@ export const updateBaseGetData = createAsyncThunk(
             dispatch(setLatest({ date: dateFormatter(date), rates }));
         } catch (error) {
             console.log(error);
+        } finally {
+            loadingHandler();
         }
     }
 );

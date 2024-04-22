@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateBaseGetData, setLatest  } from "../../../system/store/slices/currencyInfoSlice";
 import { initialNumber, insertComma, removeComma, removeZeroStart } from "../../../function/common/currencyHandler";
 import { isNumber } from "../../../function/common/validation/currencyValidation";
-import styled from "styled-components";
 import { createDebouncer, createTimer } from "../../../function/utility/createDebouncer";
-import { dateFormatter } from "../../../function/utility/utility";
+import { dateFormatter, filterArray } from "../../../function/utility/utility";
 import { getLatest } from "../../../system/api/api";
 import ExchangerView from "./ExchangerView";
 
@@ -13,20 +12,27 @@ const Exchanger = () => {
     const inputRef = useRef(null);
     const { base, symbols, latest } = useSelector((state) => state.currencyInfo);
     const [selected, setSelected] = useState("CAD");
-    const [isRefatch, setIsRefatch] = useState(false);
     const [convertCurrency, setConvertCurrency] = useState(0);
+    const [isRefatch, setIsRefatch] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const dispatch = useDispatch();
     const debouncer = createDebouncer();
     const timer = createTimer();
 
+    const initializationSelected = (target, arr) => {
+        const filteredArr = filterArray(target, arr);
+        setSelected(filteredArr[0]);
+    }
+
     useEffect(() => {
-        console.log("Exchanger Component", latest);
-        console.log("symbols :: ", symbols);
-        console.log("base :: ", base);
-        console.log("latest :: ", latest);
-        console.log("convertCurrency", convertCurrency);
-        console.log("selected", selected);
-    }, [latest])
+        initializationSelected(base, symbols);
+    }, [base])
+    console.log('latest', latest);
+
+    const loadingHandler = () => {
+        console.log('prev', isLoading);
+        setIsLoading((prev) => !prev);
+    }
 
     const onChangeBase = async (symbol) => {
         dispatch(updateBaseGetData(symbol));
@@ -44,6 +50,8 @@ const Exchanger = () => {
 
     // 환율 정보를 받아오고 현재 화폐기준으로 환산, 데이터 갱신 타이머 세팅
     const converter = async (currency, selectSymbol) => {
+        loadingHandler();
+        console.log("Loading True")
         try {
             const response = await getLatest(base, symbols);
             const { date, rates } = await response;
@@ -54,6 +62,9 @@ const Exchanger = () => {
             setTimer(60);
         } catch (error) {
             console.log(error);
+        } finally {
+            loadingHandler();
+            console.log("Loading True")
         }
     }
 
@@ -110,6 +121,7 @@ const Exchanger = () => {
             latest={latest}
             selected={selected}
             convertCurrency={convertCurrency}
+            isLoading={isLoading}
         />
     )
 }

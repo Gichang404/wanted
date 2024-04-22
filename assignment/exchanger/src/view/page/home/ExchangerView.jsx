@@ -1,4 +1,5 @@
 import * as S from "../../../asset/css/Excahnger";
+import LoaderView from "../../common/Loader";
 
 const ExchangerView = (props) => {
     return (
@@ -46,18 +47,25 @@ const ExchangerView = (props) => {
                                 )
                         )}
                     </S.NavArea>
-                    <S.CurrencyInfo>
-                        {props.latest.date ? (
-                            <>
-                                <S.Currency>
-                                    {props.selected}: {props.convertCurrency}
-                                </S.Currency>
-                                <S.Date>기준일: {props.latest.date}</S.Date>
-                            </>
-                        ) : (
-                            <p>금액을 입력해주세요.</p>
-                        )}
-                    </S.CurrencyInfo>
+                    {props.isLoading ? (
+                        <S.CurrencyInfo>
+                            <LoaderView />
+                        </S.CurrencyInfo>
+                    ) : (
+                        <S.CurrencyInfo>
+                            {props.latest.date ? (
+                                <>
+                                    <S.Currency>
+                                        {props.selected}:{" "}
+                                        {props.convertCurrency}
+                                    </S.Currency>
+                                    <S.Date>기준일: {props.latest.date}</S.Date>
+                                </>
+                            ) : (
+                                <p>금액을 입력해주세요.</p>
+                            )}
+                        </S.CurrencyInfo>
+                    )}
                 </S.Content>
             </S.ContentArea>
         </S.Wrapper>

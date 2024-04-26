@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const StarRating = ({ isStatic, prevRating }) => {
     const filledRef = useRef(null);
+    const ratingList = [1, 2, 3, 4, 5];
     const [dynamicRating, setDynamicRating] = useState(0);
     const [staticRating, setStaticRating] = useState(prevRating ? prevRating : 0);
 
@@ -45,7 +46,7 @@ const StarRating = ({ isStatic, prevRating }) => {
                 $prevRating={staticRating}
                 ref={filledRef}
             >
-                {[1, 2, 3, 4, 5].map((el, index) => (
+                {ratingList.map((el, index) => (
                     <span
                         onClick={isStatic ? undefined : saveRating}
                         onMouseMove={isStatic ? undefined : changeDynamicRate}
@@ -57,7 +58,7 @@ const StarRating = ({ isStatic, prevRating }) => {
                 ))}
             </Filled>
             <Empty>
-                {[1, 2, 3, 4, 5].map((el, index) => (
+                {ratingList.map((el, index) => (
                     <span
                         key={index}
                         data-value={el}

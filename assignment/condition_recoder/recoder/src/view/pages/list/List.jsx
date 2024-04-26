@@ -1,39 +1,11 @@
 import styled from "styled-components";
 import ConditionRating from "../../components/common/conditionRating/ConditionRating";
-import { getWeek, makeWeekList } from "../../../functions/utility/date";
-import { useNavigate } from "react-router-dom";
-import { getFilterCondition, updateCondition } from "../../../system/api/api";
-import { useEffect } from "react";
-import { useRates } from "../../../system/store/store";
+import { getWeek } from "../../../functions/utility/date";
 import BlackBtn from "../../components/common/button/BlackBtn";
+import { useList } from "../../../functions/hooks/useList";
 
 const List = () => {
-    const navigate = useNavigate();
-    const { rates, dates, loadRates, prevRates, nextRates } = useRates();
-
-    const buttonHandler = (params) => {
-        const { date, index } = params;
-        navigate(`update/${date}/${index}`);
-    };
-
-    const getPrevRates = () => {
-        prevRates();
-        loadRates();
-    };
-
-    const getNextRates = () => {
-        nextRates();
-        loadRates();
-    };
-
-    useEffect(() => {
-        loadRates();
-    }, [loadRates]);
-
-    useEffect(() => {
-        console.log(rates, dates);
-        // updateRate(4, 1);
-    }, [rates, dates]);
+    const { dates, buttonHandler, rates, getNextRates, getPrevRates } = useList();
 
     return (
         <Wrapper>

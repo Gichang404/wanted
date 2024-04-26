@@ -1,13 +1,14 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 
-const StarRating = ({ isStatic, prevRating }) => {
+const StarRating = ({ isStatic, prevRating, saveTempRating }) => {
     const filledRef = useRef(null);
     const ratingList = [1, 2, 3, 4, 5];
     const [dynamicRating, setDynamicRating] = useState(0);
     const [staticRating, setStaticRating] = useState(prevRating ? prevRating : 0);
 
-    const saveRating = () => {
+    const clickStars = () => {
+        saveTempRating(dynamicRating);
         setStaticRating(dynamicRating);
     };
 
@@ -48,7 +49,7 @@ const StarRating = ({ isStatic, prevRating }) => {
             >
                 {ratingList.map((el, index) => (
                     <span
-                        onClick={isStatic ? undefined : saveRating}
+                        onClick={isStatic ? undefined : clickStars}
                         onMouseMove={isStatic ? undefined : changeDynamicRate}
                         key={index}
                         data-value={el}

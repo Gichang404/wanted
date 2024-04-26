@@ -7,7 +7,7 @@ const List = () => {
     const navigate = useNavigate();
     const dateList = makeWeekList();
     const buttonHandler = (date) => {
-        navigate(`update/date=${date}`);
+        navigate(`update/${date}`);
     }
 
     return (
@@ -21,9 +21,9 @@ const List = () => {
                         key={index}
                         date={date}
                         week={getWeek(date)}
-                        isStatic={true}
+                        isEdit={false}
                         buttonHandler={buttonHandler}
-                        prevRating={undefined}
+                        prevRating={3}
                     />
                 ))}
             </Contents>

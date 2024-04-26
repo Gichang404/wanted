@@ -9,6 +9,7 @@ const ConditionRating = ({
     buttonHandler,
     date,
     saveTempRating,
+    index,
 }) => {
     return (
         <Wrapper>
@@ -16,13 +17,13 @@ const ConditionRating = ({
                 <p>{week}</p>
             </div>
             {!isEdit ? (
-                <div>
+                <Rating>
                     {prevRating ? (
                         <StarRating isStatic={true} prevRating={prevRating} />
                     ) : (
                         <p> - </p>
                     )}
-                </div>
+                </Rating>
             ) : (
                 <div>
                     <StarRating isStatic={false} prevRating={prevRating} saveTempRating={saveTempRating} />
@@ -33,7 +34,7 @@ const ConditionRating = ({
                     <BlackBtn
                         onClickHandler={buttonHandler}
                         text={"수정"}
-                        params={date}
+                        params={{ date, index}}
                     />
                 </div>
             )}
@@ -59,3 +60,7 @@ const Wrapper = styled.div`
         font-size: 1.5rem;
     }
 `;
+
+const Rating = styled.div`
+    width: 170px;
+`

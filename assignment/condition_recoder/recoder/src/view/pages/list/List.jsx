@@ -2,14 +2,28 @@ import styled from "styled-components";
 import ConditionRating from "../../components/common/conditionRating/ConditionRating";
 import { getWeek, makeWeekList } from "../../../functions/utility/date";
 import { useNavigate } from "react-router-dom";
-import { getFilterCondition } from "../../../system/api/api";
+import { getFilterCondition, updateCondition } from "../../../system/api/api";
+import { useEffect } from "react";
+import { useRates } from "../../../system/store/store";
 
 const List = () => {
     const navigate = useNavigate();
     const dateList = makeWeekList();
-    const buttonHandler = (date) => {
-        navigate(`update/${date}`);
+    const { rates, loadRates } = useRates();
+
+    const buttonHandler = (params) => {
+        const {date, index} = params;
+        navigate(`update/${date}/${index}`);
     }
+
+    useEffect(() => {
+        loadRates();
+    }, [loadRates]);
+
+    useEffect(() => {
+        console.log(rates);
+        // updateRate(4, 1);
+    }, [rates]);
 
     return (
         <Wrapper>
@@ -24,7 +38,8 @@ const List = () => {
                         week={getWeek(date)}
                         isEdit={false}
                         buttonHandler={buttonHandler}
-                        prevRating={3}
+                        prevRating={rates[index]}
+                        index={index}
                     />
                 ))}
             </Contents>

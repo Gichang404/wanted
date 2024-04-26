@@ -1,13 +1,16 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ConditionRating from "../../components/common/conditionRating/ConditionRating";
 import { getWeek } from "../../../functions/utility/date";
 import styled from "styled-components";
 import BlackBtn from "../../components/common/button/BlackBtn";
 import { useState } from "react";
-import { postCondition } from "../../../system/api/api";
+import { postCondition, updateCondition } from "../../../system/api/api";
+import { updateRate, useRates } from "../../../system/store/store";
 
 const Update = () => {
-    const { date } = useParams();
+    const navigate = useNavigate();
+    const { date, index } = useParams();
+    const { rates } = useRates((state) => state);
     const [tempRating, setTempRating] = useState(0);
     
     const saveTempRating = (rating) => {
@@ -15,8 +18,24 @@ const Update = () => {
     }
 
     const saveConditionData = async () => {
-        // tempRating을 이용하여 api post요청
-        const res = await postCondition(date, tempRating);
+        if (rates[index] === 0) {
+            try {
+                await postCondition(date, tempRating);
+                alert("평점을 저장 하였습니다.");
+                navigate("/");
+            } catch (error) {
+                console.log(error);
+            }
+        } else {
+            try {
+                await updateCondition(date, tempRating);
+                updateRate(index, tempRating);
+                alert("평점을 수정 하였습니다.");
+                navigate("/");
+            } catch (error) {
+                console.log(error);
+            }
+        }
     }
 
     return (

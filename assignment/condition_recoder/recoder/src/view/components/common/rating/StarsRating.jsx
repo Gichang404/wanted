@@ -23,13 +23,14 @@ const StarRating = ({ isStatic, prevRating, saveTempRating }) => {
     }
 
     const changeDynamicRate = (e) => {
-        const value = isHalf(e.target, e.clientX)
-            ? e.target.dataset.value - 0.5
-            : e.target.dataset.value;
+        const valueInt = Number(e.target.dataset.value);
+        const calculatedValue = isHalf(e.target, e.clientX)
+            ? valueInt - 0.5
+            : valueInt;
         
-        if (dynamicRating !== value) {
-            filledRef.current.style.width = `${calculateWidth(value)}%`;
-            setDynamicRating(value);
+        if (dynamicRating !== calculatedValue) {
+            filledRef.current.style.width = `${calculateWidth(calculatedValue)}%`;
+            setDynamicRating(calculatedValue);
         } else {
             return;
         }

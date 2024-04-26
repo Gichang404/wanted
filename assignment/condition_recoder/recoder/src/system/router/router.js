@@ -8,7 +8,7 @@ const router = createBrowserRouter([
         element: <List />,
     },
     {
-        path: "/update/:date",
+        path: "/update/:date/:index",
         element: <Update />,
     }
 ]);

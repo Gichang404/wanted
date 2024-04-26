@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import Detail from "../../view/pages/detail/Detail";
+import Update from "../../view/pages/update/Update";
 import List from "../../view/pages/list/List";
 
 const router = createBrowserRouter([
@@ -8,8 +8,8 @@ const router = createBrowserRouter([
         element: <List />,
     },
     {
-        path: "/detail/:date",
-        element: <Detail />,
+        path: "/update/:date",
+        element: <Update />,
     }
 ]);
 

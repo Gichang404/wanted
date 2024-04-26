@@ -7,7 +7,7 @@ const List = () => {
     const navigate = useNavigate();
     const dateList = makeWeekList();
     const buttonHandler = (date) => {
-        navigate(`detail/date=${date}`);
+        navigate(`update/date=${date}`);
     }
 
     return (

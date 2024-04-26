@@ -1,4 +1,14 @@
 {
-    "conditions": [],
-    "average_conditions": []
+  "conditions": [
+    {
+      "id": 0,
+      "date": "2024-04-25",
+      "rate": 5
+    },
+    {
+      "id": "f1bf",
+      "date": "2024-04-28",
+      "rate": 3.5
+    }
+  ]
 }

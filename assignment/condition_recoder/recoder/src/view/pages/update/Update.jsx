@@ -4,6 +4,7 @@ import { getWeek } from "../../../functions/utility/date";
 import styled from "styled-components";
 import BlackBtn from "../../components/common/button/BlackBtn";
 import { useState } from "react";
+import { postCondition } from "../../../system/api/api";
 
 const Update = () => {
     const { date } = useParams();
@@ -13,8 +14,9 @@ const Update = () => {
         setTempRating(rating);
     }
 
-    const saveConditionData = () => {
+    const saveConditionData = async () => {
         // tempRating을 이용하여 api post요청
+        const res = await postCondition(date, tempRating);
     }
 
     return (

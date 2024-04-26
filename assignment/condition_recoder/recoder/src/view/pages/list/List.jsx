@@ -2,6 +2,7 @@ import styled from "styled-components";
 import ConditionRating from "../../components/common/conditionRating/ConditionRating";
 import { getWeek, makeWeekList } from "../../../functions/utility/date";
 import { useNavigate } from "react-router-dom";
+import { getFilterCondition } from "../../../system/api/api";
 
 const List = () => {
     const navigate = useNavigate();

@@ -1,42 +1,11 @@
-import { useNavigate, useParams } from "react-router-dom";
 import ConditionRating from "../../components/common/conditionRating/ConditionRating";
 import { getWeek } from "../../../functions/utility/date";
 import styled from "styled-components";
 import BlackBtn from "../../components/common/button/BlackBtn";
-import { useState } from "react";
-import { postCondition, updateCondition } from "../../../system/api/api";
-import { updateRate, useRates } from "../../../system/store/store";
+import { useUpdate } from "../../../functions/hooks/useUpdate";
 
 const Update = () => {
-    const navigate = useNavigate();
-    const { date, index } = useParams();
-    const { rates } = useRates((state) => state);
-    const [tempRating, setTempRating] = useState(0);
-    
-    const saveTempRating = (rating) => {
-        setTempRating(rating);
-    }
-
-    const saveConditionData = async () => {
-        if (rates[index] === 0) {
-            try {
-                await postCondition(date, tempRating);
-                alert("평점을 저장 하였습니다.");
-                navigate("/");
-            } catch (error) {
-                console.log(error);
-            }
-        } else {
-            try {
-                await updateCondition(date, tempRating);
-                updateRate(index, tempRating);
-                alert("평점을 수정 하였습니다.");
-                navigate("/");
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    }
+    const { date, tempRating, saveConditionData, saveTempRating} = useUpdate();
 
     return (
         <Wrapper>
@@ -49,13 +18,17 @@ const Update = () => {
                     <ConditionRating
                         date={date}
                         week={getWeek(date)}
-                        prevRating={undefined}
+                        prevRating={tempRating}
                         saveTempRating={saveTempRating}
                         isEdit={true}
                     />
                 </Rating>
                 <Save>
-                    <BlackBtn onClickHandler={saveConditionData} params={undefined} text={"저장하기"}/>
+                    <BlackBtn
+                        onClickHandler={saveConditionData}
+                        params={undefined}
+                        text={"저장하기"}
+                    />
                 </Save>
             </Contents>
         </Wrapper>
@@ -84,15 +57,11 @@ const Contents = styled.div`
 `;
 
 const Rating = styled.div`
-    padding: 180px
+    padding: 180px;
 `;
 
 const Save = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
-
-    button {
-        
-    }
 `;

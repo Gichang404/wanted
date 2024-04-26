@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 const StarRating = ({ isStatic, prevRating, saveTempRating }) => {
@@ -6,6 +6,10 @@ const StarRating = ({ isStatic, prevRating, saveTempRating }) => {
     const ratingList = [1, 2, 3, 4, 5];
     const [dynamicRating, setDynamicRating] = useState(0);
     const [staticRating, setStaticRating] = useState(prevRating ? prevRating : 0);
+
+    useEffect(() => {
+        filledRef.current.style.width = `${calculateWidth(prevRating)}%`;
+    }, [prevRating]);
 
     const clickStars = () => {
         saveTempRating(dynamicRating);

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import StarRating from "../rating/StarsRating";
 
-const ConditionRating = ({ prevRating, isStatic, week }) => {
+const ConditionRating = ({ prevRating, isStatic, week, buttonHandler, date }) => {
     return (
         <Wrapper>
             <div>
@@ -21,7 +21,9 @@ const ConditionRating = ({ prevRating, isStatic, week }) => {
             {
                 isStatic && 
                     <div>
-                        <button>수정</button>
+                        <button onClick={()=>{
+                            buttonHandler(date);
+                        }}>수정</button>
                     </div>
             }
         </Wrapper>

@@ -6,8 +6,19 @@ export const useRates = create((set) => ({
     rates: [],
     dates: makeWeekList(),
     loadRates: async () => {
-        const rates = await initializedRates();
+        const dates = useRates.getState().dates;
+        const rates = await initializedRates(dates);
         set({ rates });
+    },
+    prevRates: () => {
+        const today = useRates.getState().dates;
+        const dates = makeWeekList(today[0], "PREV");
+        set({ dates })
+    },
+    nextRates: () => {
+        const today = useRates.getState().dates;
+        const dates = makeWeekList(today[today.length - 1], "NEXT");
+        set({ dates })
     },
 }));
 

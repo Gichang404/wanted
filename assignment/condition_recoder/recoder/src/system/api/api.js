@@ -1,12 +1,9 @@
-import { makeWeekList } from "../../functions/utility/date";
-
 const BASE_PATH = "http://localhost:5001";
 const headers = {
     "Content-Type": "application/json",
 };
 
-export const initializedRates = async () => {
-    const dates = makeWeekList();
+export const initializedRates = async (dates) => {
     const rates = await Promise.all(
         dates.map(async (date) => {
             let data = await getFilterCondition(date).then((res) => {
@@ -63,7 +60,7 @@ export const updateCondition = async (date, rate) => {
         date,
         rate,
     }
-    console.log(typeof(params.rate))
+    
     const condition = await getFilterCondition(date);
     
     try {

@@ -5,25 +5,35 @@ import { useNavigate } from "react-router-dom";
 import { getFilterCondition, updateCondition } from "../../../system/api/api";
 import { useEffect } from "react";
 import { useRates } from "../../../system/store/store";
+import BlackBtn from "../../components/common/button/BlackBtn";
 
 const List = () => {
     const navigate = useNavigate();
-    const dateList = makeWeekList();
-    const { rates, loadRates } = useRates();
+    const { rates, dates, loadRates, prevRates, nextRates } = useRates();
 
     const buttonHandler = (params) => {
-        const {date, index} = params;
+        const { date, index } = params;
         navigate(`update/${date}/${index}`);
-    }
+    };
+
+    const getPrevRates = () => {
+        prevRates();
+        loadRates();
+    };
+
+    const getNextRates = () => {
+        nextRates();
+        loadRates();
+    };
 
     useEffect(() => {
         loadRates();
     }, [loadRates]);
 
     useEffect(() => {
-        console.log(rates);
+        console.log(rates, dates);
         // updateRate(4, 1);
-    }, [rates]);
+    }, [rates, dates]);
 
     return (
         <Wrapper>
@@ -31,7 +41,7 @@ const List = () => {
                 <h2>일주일 컨디션</h2>
             </Title>
             <Contents>
-                {dateList.map((date, index) => (
+                {dates.map((date, index) => (
                     <ConditionRating
                         key={index}
                         date={date}
@@ -43,6 +53,10 @@ const List = () => {
                     />
                 ))}
             </Contents>
+            <Pagination>
+                <BlackBtn text={"이전주"} onClickHandler={getPrevRates} />
+                <BlackBtn text={"다음주"} onClickHandler={getNextRates} />
+            </Pagination>
         </Wrapper>
     );
 };
@@ -64,3 +78,9 @@ const Title = styled.div`
 const Contents = styled.div`
     padding: 10px;
 `;
+
+const Pagination = styled.div`
+    display: flex;
+    justify-content: space-evenly;
+    padding: 20px;
+`
